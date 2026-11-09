@@ -14,6 +14,12 @@ type Props = {
 
   password: string;
   setPassword: Dispatch<SetStateAction<string>>;
+  fullName: string;
+  setFullName: Dispatch<SetStateAction<string>>;
+  isRegistering: boolean;
+  setIsRegistering: Dispatch<SetStateAction<boolean>>;
+  error: string;
+  isLoading: boolean;
 
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 };
@@ -27,6 +33,12 @@ export default function LoginPage({
   setEmail,
   password,
   setPassword,
+  fullName,
+  setFullName,
+  isRegistering,
+  setIsRegistering,
+  error,
+  isLoading,
   onSubmit,
 }: Props) {
   return (
@@ -105,13 +117,13 @@ export default function LoginPage({
           {/* Login Heading */}
           <div className="login-heading">
             <span className="eyebrow">
-              WELCOME BACK
+              {isRegistering ? 'GET STARTED' : 'WELCOME BACK'}
             </span>
 
-            <h2>Good to see you.</h2>
+            <h2>{isRegistering ? 'Create your account.' : 'Good to see you.'}</h2>
 
             <p>
-              Sign in to pick up where you left off.
+              {isRegistering ? 'Create an account to start organizing your work.' : 'Sign in to pick up where you left off.'}
             </p>
           </div>
 
@@ -120,6 +132,12 @@ export default function LoginPage({
             onSubmit={onSubmit}
             className="login-form"
           >
+
+            {isRegistering && <>
+              <label htmlFor="fullName">Full name</label>
+              <input id="fullName" autoComplete="name" value={fullName}
+                onChange={event => setFullName(event.target.value)} required />
+            </>}
 
             {/* Email Field */}
             <label htmlFor="email">
@@ -144,15 +162,16 @@ export default function LoginPage({
             <input
               id="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete={isRegistering ? 'new-password' : 'current-password'}
               placeholder="Enter your password"
+              minLength={isRegistering ? 8 : undefined}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
             />
 
             {/* Form Options */}
-            <div className="form-meta">
+            {!isRegistering && <div className="form-meta">
 
               <label className="remember">
                 <input
@@ -166,18 +185,21 @@ export default function LoginPage({
               <button
                 type="button"
                 className="text-button"
+                onClick={() => setIsRegistering(false)}
               >
                 Forgot password?
               </button>
 
-            </div>
+            </div>}
+
+            {error && <p className="form-error" role="alert">{error}</p>}
 
             {/* Submit Button */}
             <button
               type="submit"
               className="primary-button"
             >
-              Sign in
+              {isLoading ? 'Please wait…' : isRegistering ? 'Create account' : 'Sign in'}
               <span>→</span>
             </button>
 
@@ -185,9 +207,9 @@ export default function LoginPage({
 
           {/* Additional Information */}
           <p className="login-foot">
-            New to Tandem?{' '}
-            <button className="text-button">
-              Contact your admin
+            {isRegistering ? 'Already have an account? ' : 'New to Tandem? '}
+            <button type="button" className="text-button" onClick={() => setIsRegistering(value => !value)}>
+              {isRegistering ? 'Sign in' : 'Create account'}
             </button>
           </p>
 

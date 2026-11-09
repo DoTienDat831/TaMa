@@ -13,7 +13,7 @@ import '../styles/tasks.css';
 type Props = {
   name: string;
   tasks: Task[];
-  onToggleTask: (id: number) => void;
+  onToggleTask: (id: string) => void;
 };
 
 // ==========================================

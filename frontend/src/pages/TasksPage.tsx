@@ -7,7 +7,7 @@ import '../styles/tasks.css'
 type Props = {
   tasks: Task[]
   search: string
-  onToggleTask: (id: number) => void
+  onToggleTask: (id: string) => void
   onAddTask: () => void
 }
 

@@ -512,6 +512,13 @@
   gap: 7px;
 }
 
+.agenda-event-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+}
+
 .time-label {
   font-size: 8px;
   color: #99a6b5;

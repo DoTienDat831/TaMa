@@ -7,7 +7,7 @@ import type { Task } from '../hooks/useTasks';
 
 type Props = {
   tasks: Task[];
-  onToggle: (id: number) => void;
+  onToggle: (id: string) => void;
   onViewAll?: () => void;
   search?: string;
 };
