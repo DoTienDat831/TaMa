@@ -1,0 +1,95 @@
+.settings-page .settings-card {
+  max-width: 790px;
+  margin: 0 0 15px;
+  padding: 20px;
+}
+
+.settings-card h2 {
+  font: 700 14px 'Manrope',sans-serif;
+  color: #263a53;
+  margin: 0;
+}
+
+.settings-card>p {
+  font-size: 10px;
+  color: #91a0af;
+  margin: 6px 0 17px;
+}
+
+.settings-profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-top: 1px solid #eef1f4;
+  padding-top: 15px;
+}
+
+.settings-profile .avatar {
+  width: 38px;
+  height: 38px;
+  flex-basis: 38px;
+  font-size: 10px;
+}
+
+.settings-profile>div:nth-child(2) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-profile strong,.setting-row strong {
+  font-size: 11px;
+  color: #455970;
+}
+
+.settings-profile span,.setting-row small {
+  font-size: 9px;
+  color: #94a1ae;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid #eef1f4;
+  padding: 14px 0;
+}
+
+.setting-row>span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-row input {
+  appearance: none;
+  width: 32px;
+  height: 18px;
+  border-radius: 10px;
+  background: #d8e0e8;
+  position: relative;
+  cursor: pointer;
+  transition: background .18s;
+}
+
+.setting-row input:checked {
+  background: #2778df;
+}
+
+.setting-row input:before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform .18s;
+}
+
+.setting-row input:checked:before {
+  transform: translateX(14px);
+}
