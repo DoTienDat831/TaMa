@@ -2,7 +2,7 @@ import type { useSchedule } from '../hooks/useSchedule'
 import '../styles/schedule.css'
 
 export default function SchedulePage({ schedule }: { schedule: ReturnType<typeof useSchedule> }) {
-  const { days, selectedDate, setSelectedDate, weekStart, changeWeek, view, setView, events, error } = schedule
+  const { days, selectedDate, setSelectedDate, weekStart, changeWeek, view, setView, events, tasks, error } = schedule
   const monthLabel = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(weekStart)
   const weekEnd = new Date(weekStart)
   weekEnd.setDate(weekEnd.getDate() + 6)
@@ -45,9 +45,19 @@ export default function SchedulePage({ schedule }: { schedule: ReturnType<typeof
 
         <div className="full-events">
           {error && <p role="alert">{error}</p>}
-          {!error && events.length === 0 && <p className="empty-tasks">No events scheduled for this day.</p>}
+          {!error && events.length === 0 && tasks.length === 0 && <p className="empty-tasks">Nothing scheduled for this day.</p>}
           {events.map(event => (
             <AgendaEvent key={event.id} event={event} />
+          ))}
+          {tasks.length > 0 && <h3 className="schedule-section-title">Tasks due</h3>}
+          {tasks.map(task => (
+            <article className="event-card event-blue schedule-task-card" key={task.id}>
+              <i />
+              <div>
+                <strong>{task.title}</strong>
+                <span>{new Date(task.dueAt!).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · {task.projectName ?? 'Personal'} · {task.status === 'DONE' ? 'Completed' : 'To do'}</span>
+              </div>
+            </article>
           ))}
         </div>
       </section>

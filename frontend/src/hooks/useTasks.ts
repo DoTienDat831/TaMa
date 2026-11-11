@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { apiGet, apiPatch, apiPost, type ApiProject, type ApiTask } from '../api/client'
+import { apiDelete, apiGet, apiPatch, apiPost, apiPut, type ApiProject, type ApiTask } from '../api/client'
 
-export type Task = { id: string; title: string; project: string; due: string; color: string; done: boolean }
+export type Task = { id: string; title: string; project: string; due: string; dueAt: string | null; dueToday: boolean; color: string; done: boolean }
 
 function toTask(task: ApiTask): Task {
   const dueDate = task.dueAt ? new Date(task.dueAt) : null
@@ -10,16 +10,16 @@ function toTask(task: ApiTask): Task {
   tomorrow.setDate(today.getDate() + 1)
   const sameDate = (left: Date, right: Date) => left.toDateString() === right.toDateString()
   const due = dueDate
-    ? sameDate(dueDate, today) ? 'Today'
-      : sameDate(dueDate, tomorrow) ? 'Tomorrow'
-        : dueDate.toLocaleDateString()
-    : 'No date'
+    ? new Intl.DateTimeFormat(undefined, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(dueDate)
+    : 'No deadline'
 
   return {
     id: task.id,
     title: task.title,
     project: task.projectName ?? 'Personal',
     due,
+    dueAt: task.dueAt,
+    dueToday: dueDate ? sameDate(dueDate, today) : false,
     color: task.color || 'blue',
     done: task.status === 'DONE',
   }
@@ -59,14 +59,14 @@ export function useTasks(userId: string | null, workspaceId: string | null) {
   const filteredTasks = useMemo(() => tasks.filter(task => task.title.toLowerCase().includes(search.toLowerCase())), [tasks, search])
   const completedCount = tasks.filter(task => task.done).length
 
-  const addTask = async (title: string) => {
-    if (!title.trim() || !userId || !workspaceId) return
+  const addTask = async (title: string, deadline: string) => {
+    if (!title.trim() || !deadline || !userId || !workspaceId) return
     try {
       const saved = await apiPost<ApiTask>('/tasks', {
         title: title.trim(),
         workspaceId,
         createdByUserId: userId,
-        dueAt: new Date().toISOString(),
+        dueAt: new Date(deadline).toISOString(),
         priority: 'MEDIUM',
         color: 'blue',
       })
@@ -103,5 +103,29 @@ export function useTasks(userId: string | null, workspaceId: string | null) {
     }
   }
 
-  return { tasks, projects, filteredTasks, search, setSearch, completedCount, addTask, addProject, toggleTask, loading, error, reload: loadData }
+  const deleteTask = async (id: string) => {
+    try {
+      await apiDelete(`/tasks/${id}`)
+      setTasks(rows => rows.filter(task => task.id !== id))
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Unable to delete task')
+    }
+  }
+
+  const updateTask = async (id: string, title: string, deadline: string) => {
+    if (!title.trim() || !deadline) return false
+    try {
+      const saved = await apiPut<ApiTask>(`/tasks/${id}`, {
+        title: title.trim(),
+        dueAt: new Date(deadline).toISOString(),
+      })
+      setTasks(rows => rows.map(task => task.id === id ? toTask(saved) : task))
+      return true
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Unable to update task')
+      return false
+    }
+  }
+
+  return { tasks, projects, filteredTasks, search, setSearch, completedCount, addTask, addProject, toggleTask, deleteTask, updateTask, loading, error, reload: loadData }
 }

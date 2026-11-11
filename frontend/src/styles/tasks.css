@@ -54,6 +54,38 @@
   margin-top: 14px;
 }
 
+.task-page-list .task-delete {
+  color: #8b98a7;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.task-page-list .task-delete:hover,
+.task-page-list .task-delete:focus-visible {
+  color: #c84444;
+  background: #fff0f0;
+}
+
+.task-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.task-page-list .task-edit {
+  color: #8b98a7;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.task-page-list .task-edit:hover,
+.task-page-list .task-edit:focus-visible {
+  color: #3978bd;
+  background: #eef6ff;
+}
+
 @media(max-width:1080px) {
   .page-content {
     padding-left: 26px;

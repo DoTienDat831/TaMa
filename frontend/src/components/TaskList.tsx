@@ -8,6 +8,8 @@ import type { Task } from '../hooks/useTasks';
 type Props = {
   tasks: Task[];
   onToggle: (id: string) => void;
+  onDelete?: (id: string) => void | Promise<void>;
+  onEdit?: (task: Task) => void;
   onViewAll?: () => void;
   search?: string;
 };
@@ -19,6 +21,8 @@ type Props = {
 export default function TaskList({
   tasks,
   onToggle,
+  onDelete,
+  onEdit,
   onViewAll,
   search = '',
 }: Props) {
@@ -32,7 +36,7 @@ export default function TaskList({
 
         {tasks.map((task) => {
           const isDone = task.done;
-          const isDueToday = task.due === 'Today';
+          const isDueToday = task.dueToday;
 
           return (
             <div
@@ -72,12 +76,32 @@ export default function TaskList({
               </span>
 
               {/* Task Options */}
-              <button
-                className="row-more"
-                aria-label="Task options"
-              >
-                ···
-              </button>
+              {(onEdit || onDelete) && (
+                <div className="task-row-actions">
+                  {onEdit && (
+                    <button
+                      className="row-more task-edit"
+                      aria-label={`Edit task ${task.title}`}
+                      title="Edit task"
+                      onClick={() => onEdit(task)}
+                    >
+                      ✎
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      className="row-more task-delete"
+                      aria-label={`Delete task ${task.title}`}
+                      title="Delete task"
+                      onClick={() => {
+                        if (window.confirm(`Delete “${task.title}”?`)) void onDelete(task.id)
+                      }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}

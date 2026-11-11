@@ -56,7 +56,7 @@ export default function LoginPage({
           {/* Brand Logo */}
           <div className="brand brand-light">
             <span className="brand-mark">t</span>
-            <span>tandem</span>
+            <span>TaMa</span>
           </div>
 
           {/* Introduction */}
@@ -111,7 +111,7 @@ export default function LoginPage({
           {/* Brand Logo */}
           <div className="brand brand-dark">
             <span className="brand-mark">t</span>
-            <span>tandem</span>
+            <span>Tama</span>
           </div>
 
           {/* Login Heading */}

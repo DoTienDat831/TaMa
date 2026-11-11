@@ -6,6 +6,7 @@ import type { useSchedule } from '../hooks/useSchedule'
 import type { Task } from '../hooks/useTasks'
 import TaskList from '../components/TaskList'
 import { useDashboard } from '../hooks/useDashboard'
+import { currentLocalDateTimeInputValue } from '../utils/dateTime'
 import '../styles/dashboard.css'
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
   search: string
   userName: string
   onToggleTask: (id: string) => void
-  onAddTask: (title: string) => void | Promise<void>
+  onAddTask: (title: string, deadline: string) => void | Promise<void>
   onViewTasks: () => void
   onViewSchedule: () => void
 }
@@ -26,19 +27,22 @@ export default function DashboardPage({ tasks, filteredTasks, completedCount, su
   onToggleTask, onAddTask, onViewTasks, onViewSchedule }: Props) {
   const { showAddTask, openAddTask, closeAddTask } = useDashboard()
   const [title, setTitle] = useState('')
+  const [deadline, setDeadline] = useState(currentLocalDateTimeInputValue)
   const todayLabel = new Date().toLocaleDateString(undefined, {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   }).toUpperCase()
   const totalTasks = summary?.totalTasks ?? tasks.length
   const doneTasks = summary?.completedTasks ?? completedCount
-  const upcomingTasks = summary?.tasksDueInRange ?? tasks.filter(task => task.due !== 'No date').length
+  const upcomingTasks = summary?.tasksDueInRange ?? tasks.filter(task => !task.done && !task.dueToday).length
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const taskTitle = title.trim()
     if (!taskTitle) return
-    void onAddTask(taskTitle)
+    if (!deadline) return
+    void onAddTask(taskTitle, deadline)
     setTitle('')
+    setDeadline(currentLocalDateTimeInputValue())
     closeAddTask()
   }
 
@@ -71,7 +75,7 @@ export default function DashboardPage({ tasks, filteredTasks, completedCount, su
           </div>
           <div className="task-tabs">
             <button className="selected">All tasks <span>{tasks.length}</span></button>
-            <button>Today <span>{tasks.filter(task => task.due === 'Today').length}</span></button>
+            <button>Today <span>{tasks.filter(task => task.dueToday).length}</span></button>
             <button>Upcoming</button>
             <button className="filter-button">☷ <span>Filter</span></button>
           </div>
@@ -91,9 +95,13 @@ export default function DashboardPage({ tasks, filteredTasks, completedCount, su
             <button type="button" className="modal-close" onClick={closeAddTask}>×</button>
             <span className="eyebrow">NEW TASK</span>
             <h2>What needs to get done?</h2>
-            <p>Add a task to your list for today.</p>
-            <input autoFocus placeholder="e.g. Prepare project update" value={title}
+            <p>Add a task and choose its deadline.</p>
+            <label htmlFor="dashboard-task-title">Task name</label>
+            <input id="dashboard-task-title" autoFocus placeholder="e.g. Prepare project update" value={title}
               onChange={event => setTitle(event.target.value)} required />
+            <label htmlFor="dashboard-task-deadline">Deadline</label>
+            <input id="dashboard-task-deadline" type="datetime-local" value={deadline}
+              onChange={event => setDeadline(event.target.value)} required />
             <button className="primary-button" type="submit">Create task <span>→</span></button>
           </form>
         </div>

@@ -85,6 +85,24 @@
   padding: 10px 0;
 }
 
+.schedule-section-title {
+  margin: 8px 0 0;
+  color: #43566d;
+  font-size: 12px;
+}
+
+.schedule-task-card {
+  min-height: 58px;
+}
+
+.schedule-task-card strong {
+  font-size: 11px;
+}
+
+.schedule-task-card span {
+  font-size: 9px;
+}
+
 .schedule-event-row {
   display: grid;
   grid-template-columns: 55px 1fr;

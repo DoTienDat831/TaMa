@@ -40,6 +40,9 @@ public class TaskService {
     @Transactional
     public TaskResponse create(CreateTaskRequest request) {
         requireText(request.title());
+        if (request.dueAt() == null) {
+            throw new BadRequestException("Task deadline is required");
+        }
         Workspace workspace = workspaces.findById(request.workspaceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Workspace", request.workspaceId()));
         User creator = users.findById(request.createdByUserId())
