@@ -4,6 +4,7 @@ import {
     CalendarRange,
     Settings,
 } from "lucide-react";
+import type { ApiProject, ApiUser } from "../api/client";
 
 
 // ==========================================
@@ -16,6 +17,10 @@ type Props = {
   onNavigate: (page: string) => void;
   onToggle: () => void;
   onLogout: () => void;
+  projects: ApiProject[];
+  user: ApiUser | null;
+  taskCount: number;
+  onAddProject: () => void;
 };
 
 // ==========================================
@@ -24,7 +29,7 @@ type Props = {
 
 const nav = [
   { name: 'Dashboard', icon:  <LayoutDashboard /> },
-  { name: 'Tasks', icon: <LayoutList />, count: '8' },
+  { name: 'Tasks', icon: <LayoutList /> },
   { name: 'Schedule', icon: <CalendarRange /> },
   { name: 'Setting', icon: <Settings /> },
 ];
@@ -39,6 +44,10 @@ export default function Sidebar({
   onNavigate,
   onToggle,
   onLogout,
+  projects,
+  user,
+  taskCount,
+  onAddProject,
 }: Props) {
   return (
     <aside className="sidebar">
@@ -93,9 +102,9 @@ export default function Sidebar({
                 <>
                   <span>{item.name}</span>
 
-                  {item.count && (
+                  {item.name === 'Tasks' && (
                     <span className="nav-count">
-                      {item.count}
+                      {taskCount}
                     </span>
                   )}
                 </>
@@ -116,40 +125,24 @@ export default function Sidebar({
           <div className="section-label">
             YOUR PROJECTS
 
-            <button aria-label="Add project">
+            <button aria-label="Add project" onClick={onAddProject}>
               ＋
             </button>
           </div>
 
-          {/* Project: Website Redesign */}
-          <button
-            className="project-item"
-            onClick={() => onNavigate('Website redesign')}
-          >
-            <i className="project-dot blue" />
-            Website redesign
-          </button>
-
-          {/* Project: Marketing */}
-          <button
-            className="project-item"
-            onClick={() => onNavigate('Marketing')}
-          >
-            <i className="project-dot orange" />
-            Marketing
-          </button>
-
-          {/* Project: Product Launch */}
-          <button
-            className="project-item"
-            onClick={() => onNavigate('Product launch')}
-          >
-            <i className="project-dot violet" />
-            Product launch
-          </button>
+          {projects.map(project => (
+            <button
+              key={project.id}
+              className="project-item"
+              onClick={() => onNavigate(project.name)}
+            >
+              <i className="project-dot blue" />
+              {project.name}
+            </button>
+          ))}
 
           {/* Add Project Button */}
-          <button className="project-add">
+          <button className="project-add" onClick={onAddProject}>
             ＋ &nbsp;Add project
           </button>
 
@@ -193,7 +186,7 @@ export default function Sidebar({
             </div>
 
             <span className="profile-info">
-              <strong>Alex Chen</strong>
+                <strong>{user?.fullName ?? 'User'}</strong>
               <small>Free plan</small>
             </span>
 
@@ -220,7 +213,7 @@ export default function Sidebar({
       {collapsed && (
         <button
           className="collapsed-avatar"
-          title="Alex Chen"
+          title={user?.fullName ?? 'User'}
           onClick={() => onNavigate('Setting')}
         >
           AC
